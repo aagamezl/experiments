@@ -1,11 +1,14 @@
 #!/bin/bash
 
-FMT_RED=$(printf '\033[31m')
-FMT_GREEN=$(printf '\033[32m')
-FMT_YELLOW=$(printf '\033[33m')
-FMT_BLUE=$(printf '\033[34m')
-FMT_BOLD=$(printf '\033[1m')
-FMT_RESET=$(printf '\033[0m')
+VERSION="1.0.0"
+
+FMT_RESET='\033[0m' # Color Off
+FMT_BLUE='\033[34m'
+FMT_BOLD='\033[1m'
+FMT_CYAN='\033[0;36m'
+FMT_GREEN='\033[0;32m'
+FMT_RED='\033[0;31m'
+FMT_YELLOW='\033[0;33m'
 
 # Define the target path
 SCRIPT_NAME="install.sh"
