@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # Define the target path
-TARGET_PATH="/usr/local/bin/shest"
+SCRIPT_NAME=$(basename $0)
+TARGET_PATH="/usr/local/bin/$SCRIPT_NAME"
 GITHUB_URL="https://raw.githubusercontent.com/aagamezl/experiments/master/shell/install.sh"
 
 # Check if the script already exists
