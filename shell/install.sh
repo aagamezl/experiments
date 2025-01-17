@@ -1,25 +1,36 @@
 #!/bin/bash
 
-# Define the target path
-SCRIPT_NAME=$(basename $0)
-TARGET_PATH="/usr/local/bin/$SCRIPT_NAME"
-GITHUB_URL="https://raw.githubusercontent.com/aagamezl/experiments/master/shell/install.sh"
+FMT_RED=$(printf '\033[31m')
+FMT_GREEN=$(printf '\033[32m')
+FMT_YELLOW=$(printf '\033[33m')
+FMT_BLUE=$(printf '\033[34m')
+FMT_BOLD=$(printf '\033[1m')
+FMT_RESET=$(printf '\033[0m')
 
-# Check if the script already exists
-if [ -f "$TARGET_PATH" ]; then
-  echo "shest is already installed at $TARGET_PATH."
-else
-  echo "Installing shest..."
-  # Download the script and save it to /usr/local/bin
-  curl -fsSL "$GITHUB_URL" -o "$TARGET_PATH"
-  
-  # Set execution permissions
-  chmod +x "$TARGET_PATH"
-  
-  if [ $? -eq 0 ]; then
-    echo "shest installed successfully at $TARGET_PATH."
+# Define the target path
+SCRIPT_NAME="install.sh"
+TARGET_PATH="/home/$USER/$SCRIPT_NAME"
+GITHUB_URL="https://raw.githubusercontent.com/aagamezl/experiments/master/shell/$SCRIPT_NAME"
+
+function file_exist() {
+  local file_path=$1
+
+  local file_path=$1
+
+  if [[ -e $file_path ]]; then
+    # echo "The file '$file_path' exists."
+    return 0
   else
-    echo "Failed to install shest. Please check your permissions."
-    exit 1
+    # echo "The file '$file_path' does not exist."
+    return 1
   fi
+}
+
+if ! file_exist "${TARGET_PATH}"; then
+  echo "${FMT_YELLOW}$SCRIPT_NAME${FMT_RESET} is not installed. Installing."
+  curl -o "$TARGET_PATH" "$GITHUB_URL"
+else
+  echo "${FMT_YELLOW}${SCRIPT_NAME}${FMT_RESET} is already installed."
+
+  exit 1
 fi
