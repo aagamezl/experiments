@@ -15,25 +15,44 @@ SCRIPT_NAME="install.sh"
 TARGET_PATH="/home/$USER/$SCRIPT_NAME"
 GITHUB_URL="https://raw.githubusercontent.com/aagamezl/experiments/master/shell/$SCRIPT_NAME"
 
-function file_exist() {
-  local file_path=$1
+install_script() {
+  # Download the script and save it to /usr/local/bin
+  curl -fsSL "$GITHUB_URL" -o "$TARGET_PATH"
 
-  local file_path=$1
-
-  if [[ -e $file_path ]]; then
-    # echo "The file '$file_path' exists."
-    return 0
+  if [ $? -eq 0 ]; then
+    echo -e "${FMT_YELLOW}$SCRIPT_NAME${FMT_RESET}${FMT_RESET} version ${FMT_CYAN}$VERSION${FMT_RESET} installed successfully at ${FMT_YELLOW}$TARGET_PATH${FMT_RESET}."
   else
-    # echo "The file '$file_path' does not exist."
-    return 1
+    echo -e "${FMT_RED}Failed to install ${FMT_YELLOW}$SCRIPT_NAME${FMT_RESET}. Please check your permissions.${FMT_RESET}"
+    exit 1
   fi
 }
 
-if ! file_exist "${TARGET_PATH}"; then
-  echo "${FMT_YELLOW}$SCRIPT_NAME${FMT_RESET} is not installed. Installing."
-  curl -o "$TARGET_PATH" "$GITHUB_URL"
-else
-  echo "${FMT_YELLOW}${SCRIPT_NAME}${FMT_RESET} is already installed."
+# Check if the script already exists
+if [ -f "$TARGET_PATH" ]; then
+  # Extract the semantic version number
+  INSTALLED_VERSION=$(grep -oP 'VERSION="\K[0-9]+\.[0-9]+\.[0-9]+' "$TARGET_PATH")
 
-  exit 1
+  if grep -qE "^VERSION=\"$VERSION\"" "$TARGET_PATH"; then
+    echo -e "The most recent version $INSTALLED_VERSION is already installed at ${FMT_YELLOW}$TARGET_PATH${FMT_RESET}."
+  else
+    echo -e "${FMT_CYAN}A new version of ${FMT_RESET}${FMT_YELLOW}$SCRIPT_NAME${FMT_RESET} ${FMT_CYAN}($VERSION -> $INSTALLED_VERSION) exists${FMT_RESET}"
+
+    read -p "Do you want to upgrade? (Y/N): " confirm && [[ $confirm == [yY] || $confirm == [yY][eE][sS] ]] || exit 1
+
+    install_script
+  fi
+else
+  echo -e "${FMT_YELLOW}$SCRIPT_NAME${FMT_RESET} is not installed."
+
+  # Download the script and save it to /usr/local/bin
+  curl -fsSL "$GITHUB_URL" -o "$TARGET_PATH"
+
+  # if [ $? -eq 0 ]; then
+  #   echo -e "${FMT_YELLOW}$SCRIPT_NAME${FMT_RESET}${FMT_RESET} version ${FMT_CYAN}$VERSION${FMT_RESET} installed successfully at ${FMT_YELLOW}$TARGET_PATH${FMT_RESET}."
+  # else
+  #   echo -e "${FMT_RED}Failed to install ${FMT_YELLOW}$SCRIPT_NAME${FMT_RESET}. Please check your permissions.${FMT_RESET}"
+  #   exit 1
+  # fi
+
+  install_script
 fi
